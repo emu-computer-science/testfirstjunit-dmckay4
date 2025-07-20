@@ -37,43 +37,45 @@ public class DateAddDaysTest {
 		}
 	}
 	
-	@Test
-	public void testAddsDayCorrectlyWhenCrossingMonthBoundary_case31Days() throws Exception {
-		Date originalDate = new Date(1,31, 2025);
-		Date expectedDate = new Date(2,1,2025);
+	public static class TestAddADayAcrossMonthBoundaries {
+		@Test
+		public void testAddsDayCorrectlyWhenCrossingMonthBoundary_case31Days() throws Exception {
+			Date originalDate = new Date(1,31, 2025);
+			Date expectedDate = new Date(2,1,2025);
+			
+			Date actualDate = originalDate.addOneDay();
+			
+			assertTrue(expectedDate.equals(actualDate));
+		}
 		
-		Date actualDate = originalDate.addOneDay();
+		@Test
+		public void testAddsDayCorrectlyWhenCrossingMonthBoundary_case28Days() throws Exception {
+			Date originalDate = new Date(2,28, 2025);
+			Date expectedDate = new Date(3,1,2025);
+			
+			Date actualDate = originalDate.addOneDay();
+			
+			assertTrue(expectedDate.equals(actualDate));
+		}
 		
-		assertTrue(expectedDate.equals(actualDate));
-	}
-	
-	@Test
-	public void testAddsDayCorrectlyWhenCrossingMonthBoundary_case28Days() throws Exception {
-		Date originalDate = new Date(2,28, 2025);
-		Date expectedDate = new Date(3,1,2025);
+		@Test
+		public void testAddsDayCorrectlyWhenCrossingMonthBoundary_case30Days() throws Exception {
+			Date originalDate = new Date(6,30, 2025);
+			Date expectedDate = new Date(7,1,2025);
+			
+			Date actualDate = originalDate.addOneDay();
+			
+			assertTrue(expectedDate.equals(actualDate));
+		}
 		
-		Date actualDate = originalDate.addOneDay();
-		
-		assertTrue(expectedDate.equals(actualDate));
-	}
-	
-	@Test
-	public void testAddsDayCorrectlyWhenCrossingMonthBoundary_case30Days() throws Exception {
-		Date originalDate = new Date(6,30, 2025);
-		Date expectedDate = new Date(7,1,2025);
-		
-		Date actualDate = originalDate.addOneDay();
-		
-		assertTrue(expectedDate.equals(actualDate));
-	}
-	
-	@Test
-	public void testAddsDayCorrectlyWhenCrossingYearBoundary() throws Exception {
-		Date originalDate = new Date(12,31, 2025);
-		Date expectedDate = new Date(1,1,2026);
-		
-		Date actualDate = originalDate.addOneDay();
-		
-		assertTrue(expectedDate.equals(actualDate));
+		@Test
+		public void testAddsDayCorrectlyWhenCrossingYearBoundary() throws Exception {
+			Date originalDate = new Date(12,31, 2025);
+			Date expectedDate = new Date(1,1,2026);
+			
+			Date actualDate = originalDate.addOneDay();
+			
+			assertTrue(expectedDate.equals(actualDate));
+		}
 	}
 }
