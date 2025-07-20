@@ -1,10 +1,12 @@
 package testingDates;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class Date
 {
-    private String month;
+    private Month month;
     private int day;
     private int year; //a four digit number.
 
@@ -25,7 +27,7 @@ public class Date
 
     public Date(int year)
     {
-        month = "January";
+        month = Month.JANUARY;
         day = 1;
         this.year = year;
     }
@@ -47,30 +49,26 @@ public class Date
     {
         if (dateOK(monthInt, day, year))
         {
-            this.month = monthString(monthInt);
+            this.month = monthFromNumber(monthInt);
             this.day = day;
             this.year = year;
         }
         else
         {
             System.out.println("Fatal Error in setDate(int, int, int)");
-            System.exit(0);
         }
     }
 
     public void setDate(String monthString, int day, int year)
     {
-        if (dateOK(monthString, day, year))
-        {
-            this.month = monthString;
-            this.day = day;
-            this.year = year;
-        }
-        else
-        {
-            System.out.println("Fatal Error in setDate(String,int, int)");
-            System.exit(0);
-        }
+    	try {
+    		int monthNumber = Month.getByName(monthString).ordinal() + 1;    		
+    		setDate(monthNumber, day, year);
+    	} catch(NoSuchElementException e) {
+    		System.out.println("Fatal Error in setDate(String, int, int)");
+    		System.out.println("Invalid month!");
+    	}
+        
     }
 
     public void setDate(int year)
@@ -96,7 +94,7 @@ public class Date
             System.exit(0);
         }
         else
-            month = monthString(monthNumber);
+            month = monthFromNumber(monthNumber);
     }
 
     public void setDay(int day)
@@ -112,36 +110,7 @@ public class Date
 
     public int getMonth( )
     {
-        if (month.equals("January"))
-            return 1;
-        else if (month.equals("February"))
-            return 2;
-        else if (month.equalsIgnoreCase("March"))
-            return 3;
-        else if (month.equalsIgnoreCase("April"))
-            return 4;
-        else if (month.equalsIgnoreCase("May"))
-            return 5;
-        else if (month.equals("June"))
-            return 6;
-        else if (month.equalsIgnoreCase("July"))
-            return 7;
-        else if (month.equalsIgnoreCase("August"))
-            return 8;
-        else if (month.equalsIgnoreCase("September"))
-            return 9;
-        else if (month.equalsIgnoreCase("October"))
-            return 10;
-        else if (month.equals("November"))
-            return 11;
-        else if (month.equals("December"))
-            return 12;
-        else
-        {
-            System.out.println("Fatal Error in getMonth");
-            System.exit(0);
-            return 0; //Needed to keep the compiler happy
-        }
+        return month.ordinal() + 1;
     }
 
     public int getDay( )
@@ -192,64 +161,61 @@ public class Date
             else
                 System.out.println("Illegal date. Reenter input.");
          }
+        keyboard.close();
     }
 
     private boolean dateOK(int monthInt, int dayInt, int yearInt)
     {
-        return ( (monthInt >= 1) && (monthInt <= 12) &&
-                 (dayInt >= 1) && (dayInt <= 31) &&
+    	if ((monthInt < 1) || (monthInt > 12)) {
+    		return false;
+    	}
+    	
+    	Month targetMonth = monthFromNumber(monthInt);
+    	
+        return ( (dayInt >= 1) && (dayInt <= targetMonth.days) &&
                  (yearInt >= 1000) && (yearInt <= 9999) );
     }
 
     private boolean dateOK(String monthString, int dayInt, int yearInt)
     {
-        return ( monthOK(monthString) &&
-                 (dayInt >= 1) && (dayInt <= 31) &&
-                 (yearInt >= 1000) && (yearInt <= 9999) );
+    	try {
+    		int monthNumber = Month.getByName(monthString).ordinal() + 1;
+    		return dateOK(monthNumber, dayInt, yearInt);    		
+    	} catch (NoSuchElementException exception) {
+    		return false;
+    		
+    	}
     }
 
-    private boolean monthOK(String month)
-    {
-        return (month.equals("January") || month.equals("February") ||
-                month.equals("March") || month.equals("April") ||
-                month.equals("May") || month.equals("June") ||
-                month.equals("July") || month.equals("August") ||
-                month.equals("September") || month.equals("October") ||
-                month.equals("November") || month.equals("December") );
-    }
-
-    private String monthString(int monthNumber)
+    private Month monthFromNumber(int monthNumber)
     {
         switch (monthNumber)
         {
         case 1:
-            return "January";
+            return Month.JANUARY;
         case 2:
-            return "February";
+            return Month.FEBRUARY;
         case 3:
-            return "March";
+            return Month.MARCH;
         case 4:
-            return "April";
+            return Month.APRIL;
         case 5:
-            return "May";
+            return Month.MAY;
         case 6:
-            return "June";
+            return Month.JUNE;
         case 7:
-            return "July";
+            return Month.JULY;
         case 8:
-            return "August";
+            return Month.AUGUST;
         case 9:
-            return "September";
+            return Month.SEPTEMBER;
         case 10:
-            return "October";
+            return Month.OCTOBER;
         case 11:
-            return "November";
+            return Month.NOVEMBER;
         case 12:
-            return "December";
         default:
-            System.out.println("Fatal Error in monthString");
-            System.exit(0);
-            return "Error"; //to keep the compiler happy
+            return Month.DECEMBER;
         }
     }
     public static void main(String[] args) {
@@ -259,8 +225,54 @@ public class Date
     }
     
     public Date addOneDay(){
-	   System.out.println("Date.addOneDay() is not yet implemented.");
-	   return null;
+    	Month newMonth = this.month;
+    	int newDay = this.day + 1;
+    	int newYear = this.year;
+    	if (newDay > this.month.days) {// time for a new month
+    		int nextMonth = (this.month.ordinal() + 1);
+    		if (nextMonth > 11) { // It's already December, time for a new year
+    			nextMonth = nextMonth % 12;
+    			newYear++;
+    			if (newYear > 9999) {
+    				return this; // year would be invalid, don't change the date
+    			}
+    		}
+    		newMonth = Month.values()[nextMonth];
+    		newDay = 1;
+    	}
+    		
+	   return new Date(newMonth.name, newDay, newYear);
 	}
+    
+    private enum Month{
+    	JANUARY 	("January", 31), 
+    	FEBRUARY	("February", 28),
+    	MARCH		("March", 31),
+    	APRIL		("April", 30),
+    	MAY			("May", 31),
+    	JUNE		("June", 30),	
+    	JULY		("July", 31),
+    	AUGUST		("August", 31),
+    	SEPTEMBER	("September", 30),
+    	OCTOBER		("October", 31),
+    	NOVEMBER	("November", 30),
+    	DECEMBER	("December", 31);
+    	
+    	private final String name;
+    	
+    	private final int days;
+    	
+    	Month(String name, int days){
+    		this.name = name;
+    		this.days = days;
+    	}
+    	
+    	public static Month getByName(String name) throws NoSuchElementException {
+    		return Stream.of(Month.values())
+    		.filter(m-> m.name.toLowerCase().equals(name.toLowerCase()))
+    		.findFirst()
+    		.orElseThrow();
+    	}
+    }
     
 }

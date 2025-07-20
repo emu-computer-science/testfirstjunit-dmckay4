@@ -41,6 +41,15 @@ public class DateSetDateTest {
 	}
 	
 	@Test
+	public void testDoesnotSetDateWhenDayDoesNotFitInMonth() throws Exception {
+		date.setDate("February", 29, 1999);
+		
+		assertEquals(2, date.getMonth());
+		assertEquals(2, date.getDay());
+		assertEquals(2222, date.getYear());
+	}
+	
+	@Test
 	public void testDoesNotSetDateWhenIsInvalid() throws Exception {
 		date.setDate("March", 1, 10000);
 		

@@ -25,15 +25,15 @@ public class DateAddDaysTest {
 	
 		
 		@Test
-		public void testReturnsCorrectDayWhenAddingADayInSameMonth_CaseOne() throws Exception {
-			int expectedMonth = 2;
+		public void testSetsDayCorrectlyWhenAddingADayInSameMonth() throws Exception {
+			int expectedMonth = 3;
 			int expectedYear = 2025;
 			Date originalDate = new Date(expectedMonth, expectedDay - 1, expectedYear);
 			Date expectedDate = new Date(expectedMonth, expectedDay, expectedYear);
 			
-			Date newDate = originalDate.addOneDay();
+			Date actualDate = originalDate.addOneDay();
 			
-			assertTrue(expectedDate.equals(newDate));
+			assertTrue(expectedDate.equals(actualDate));
 		}
 	}
 	
@@ -74,6 +74,15 @@ public class DateAddDaysTest {
 			Date expectedDate = new Date(1,1,2026);
 			
 			Date actualDate = originalDate.addOneDay();
+			
+			assertTrue(expectedDate.equals(actualDate));
+		}
+		
+		@Test
+		public void testDoesNotAddDayIfYearWouldBeTooHigh() throws Exception {
+			Date expectedDate = new Date(12, 31, 9999);
+			
+			Date actualDate = expectedDate.addOneDay();
 			
 			assertTrue(expectedDate.equals(actualDate));
 		}
