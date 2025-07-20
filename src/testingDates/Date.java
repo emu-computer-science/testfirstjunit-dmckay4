@@ -1,4 +1,4 @@
-package buildToTestLab;
+package testingDates;
 
 import java.util.Scanner;
 
